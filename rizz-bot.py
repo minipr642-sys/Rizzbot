@@ -2,14 +2,23 @@ import os
 import random
 import logging
 from telegram import Update
-from telegram.ext import Application, MessageHandler, filters, ContextTypes
+from telegram.ext import (
+    Application,
+    MessageHandler,
+    CommandHandler,   # ✅ You were missing this import
+    filters,
+    ContextTypes,
+)
 
 # Set up logging for debugging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level=logging.INFO,
+)
 logger = logging.getLogger(__name__)
 
 # Get bot token from environment variable (set on Render)
-TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 if not TOKEN:
     raise ValueError("TELEGRAM_BOT_TOKEN not set in environment variables")
 
@@ -34,12 +43,11 @@ RIZZ_LINES = [
     "I'd say you're the bomb, but that might be too explosive for a first chat.",
     "You had me at hello—now keep me with that rizz!",
     "If kisses were snowflakes, I'd send you a blizzard.",
-    "You're the peanut butter to my jelly—irresistibly smooth."
+    "You're the peanut butter to my jelly—irresistibly smooth.",
 ]
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle incoming text messages and reply with a random rizz line."""
-    user_message = update.message.text.lower()
     rizz_reply = random.choice(RIZZ_LINES)
     await update.message.reply_text(rizz_reply)
     logger.info(f"Replied to {update.effective_user.id} with: {rizz_reply}")
@@ -58,15 +66,15 @@ def main() -> None:
         application = Application.builder().token(TOKEN).build()
 
         # Add handlers
-        application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
         application.add_handler(CommandHandler("start", start))
+        application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
         # Start polling
-        print("Rizz Bot is starting... Press Ctrl+C to stop.")
+        print("Rizz Bot is starting... 🚀")
         application.run_polling(allowed_updates=Update.ALL_TYPES)
     except Exception as e:
         logger.error(f"Failed to start bot: {e}")
         raise
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
