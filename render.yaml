@@ -1,7 +1,10 @@
 services:
   - type: web
-    name: rizz-bot
+    name: your-service-name
     env: python
-    buildCommand: ""
-    startCommand: "python rizz.py"
-    plan: free
+    runtime: python-3.11  # or python-3.12
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn rizz:app --bind 0.0.0.0:10000
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false  # Set this manually in the Render dashboard
